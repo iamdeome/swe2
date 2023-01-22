@@ -8,4 +8,6 @@ public class Ware {
     Ort gekauftIn;
 
     boolean ortGekauft;
+
+    
 }
