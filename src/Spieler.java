@@ -13,6 +13,7 @@ public class Spieler {
     public Spieler(String name) {
         this.name = name;
         this.goldstuecke = 100;
+        this.lp = 100;
     }
 
     public int getLp() {
