@@ -17,14 +17,33 @@ public class Spiel {
 
         System.out.println("Hallo " + spieler.getName());
 
+
         while (true){
             System.out.println("Sie befinden sich im " + spieler.jetzigerOrt.getName());
-            switch(expression) {
-                case x:
+            System.out.println("wählen Sie eine Option: ");
+            System.out.println("1. Ware kaufen. ");
+            System.out.println("2. Ware verkaufen. ");
+            System.out.println("3. Reisen. ");
+            System.out.println("4. Tätigkeit annehmen. ");
+            System.out.println("5. Spiel beenden. ");
+
+
+            int input = sc.nextInt();
+            switch(input) {
+                case 1:
                     // code block
                     break;
-                case y:
+                case 2:
                     // code block
+                    break;
+                case 3:
+                    // code block
+                    break;
+                case 4:
+                    // code block
+                    break;
+                case 5:
+
                     break;
                 default:
 
@@ -35,3 +54,9 @@ public class Spiel {
         System.out.println("Speilende. Sie haben " + spieler.getGoldstuecke() + " für " + tag +" Tage erreicht.");
     }
 }
+
+
+
+        1
+    2       3
+4       5       6
