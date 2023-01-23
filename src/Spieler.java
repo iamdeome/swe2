@@ -1,11 +1,11 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Spieler {
     private final String name;
     private int goldstuecke;
     private int lp;
-    Spiel spiel;
     List<Ware> wareListe = new ArrayList<>();
     Ort jetzigerOrt;
 
@@ -26,6 +26,48 @@ public class Spieler {
             gewicht += ware.getGewicht();
         }
         return gewicht;
+    }
+
+    public int getBohnen() {
+        int bohnen = 0;
+        for (Ware ware : wareListe) {
+            if (ware.getName().equals("Bohnen mit Speck")) {
+                bohnen++;
+            }
+        }
+        return bohnen;
+    }
+
+    public void bohnenEssen() {
+        int bohnen = getBohnen();
+        if (bohnen == 0) {
+            System.out.println("Du hast keine Bohnen mit Speck. LP -20");
+            return;
+        }
+
+        // remove the first Bohnen mit Speck
+        for (Ware ware : wareListe) {
+            if (ware.getName().equals("Bohnen mit Speck")) {
+                wareListe.remove(ware);
+                break;
+            }
+        }
+        lp += 20;
+    }
+
+    public void essen() {
+        if (getGoldstuecke() <= 0) {
+            System.out.println("Du hast kein Geld um dir Essen zu kaufen.");
+            return;
+        }
+
+        setGoldstuecke(getGoldstuecke() - 1);
+        setLp(getLp() + 20);
+        System.out.println("Du hast dich von lokalen Produkten ernähren. LP +20");
+
+        if (getLp() > 100) {
+            Spiel.beenden();
+        }
     }
 
     public int getLp() {
@@ -133,6 +175,48 @@ public class Spieler {
 
     public void reisen() {
 
+        System.out.println("Wohin möchtest du reisen?");
+        ArrayList<Ort> ziele = new ArrayList<Ort>(Spiel.getOrtListe());
+
+        // Filter out the current location
+        ziele.remove(jetzigerOrt);
+
+        // Show all available destinations
+        System.out.println("0: Nicht reisen");
+        for (int i = 0; i < ziele.size(); i++) {
+            double distance = jetzigerOrt.calculateDistanceTo(ziele.get(i));
+            int days = Ort.distanceToDays(distance);
+            System.out.println((i + 1) + ": " + ziele.get(i).getName() + " ("
+                    + days + " tage, " + Math.round(distance) + "km)");
+        }
+
+        // Check if the player entered a valid destination
+        int selected;
+        try {
+            selected = Spiel.sc.nextInt() - 1;
+            if (selected < -1 || selected >= ziele.size()) {
+                throw new Exception();
+            }
+        } catch (Exception e) {
+            Spiel.sc.nextLine();
+            System.out.println("Ungültige Eingabe");
+            return;
+        }
+
+        // Check if the player wants to travel
+        if (selected == -1) {
+            return;
+        }
+
+        // Increase the days
+        double distance = jetzigerOrt.calculateDistanceTo(ziele.get(selected));
+        int days = Ort.distanceToDays(distance);
+        for (int i = 0; i < days; i++) {
+            Spiel.incrementTag();
+        }
+
+        // Travel to the selected destination
+        jetzigerOrt = ziele.get(selected);
     }
 
 }

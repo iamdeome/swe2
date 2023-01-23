@@ -1,14 +1,17 @@
 import java.util.Scanner;
-import java.nio.channels.Pipe;
 import java.util.Arrays;
+import java.util.List;
 
 public class Spiel {
+    public static Scanner sc = new Scanner(System.in);
+
     private static Spieler spieler;
     private static int tag = 1;
-    public static Scanner sc = new Scanner(System.in);
+    private static List<Ort> ortListe;
 
     public static void main(String[] args) {
         // Create Ware
+        Ware W_bohnen = new Ware("Bohnen mit Speck", 1, 1);
         Ware W_brot = new Ware("Brot", 3, 1);
         Ware W_fisch = new Ware("Fisch", 10, 2);
         Ware W_wasser = new Ware("Wasser", 3, 3);
@@ -23,16 +26,20 @@ public class Spiel {
         // Create Orte
         Ort O_berlin = new Ort("Berlin",
                 52.482514, 13.396573,
-                T_fegen, Arrays.asList(W_brot, W_fisch), true);
+                T_fegen, Arrays.asList(W_bohnen, W_brot, W_fisch), true);
         Ort O_hamburg = new Ort("Hamburg",
                 53.556451, 9.909963,
-                T_limonade, Arrays.asList(W_brot, W_wasser), true);
+                T_limonade, Arrays.asList(W_bohnen, W_brot, W_wasser), true);
         Ort O_dresden = new Ort("Dresden",
                 51.051431, 13.733612,
-                T_fische, Arrays.asList(W_schwert, W_fisch, W_brot), true);
+                T_fische, Arrays.asList(W_bohnen, W_schwert, W_fisch, W_brot), true);
         Ort O_schmalkladen = new Ort("Schmalkladen",
                 50.717332, 10.459702,
                 T_limonade, Arrays.asList(W_limonade), false);
+        Ort O_erfurt = new Ort("Erfurt",
+                50.977754, 11.016364,
+                T_fegen, Arrays.asList(W_bohnen, W_brot, W_fisch), true);
+        ortListe = Arrays.asList(O_berlin, O_hamburg, O_dresden, O_schmalkladen, O_erfurt);
 
         System.out.println("Geben Sie Ihren Namen ein:");
 
@@ -45,14 +52,16 @@ public class Spiel {
         while (true) {
             System.out.println("");
             System.out.println(
-                    "tag: " + tag + " \t " + " LP " + spieler.getLp() + " \t " + " GS " + spieler.getGoldstuecke());
+                    "tag: " + tag + " \t " + " LP " + spieler.getLp() + " \t " + " GS " + spieler.getGoldstuecke()
+                            + " Bohnen " + spieler.getBohnen());
             System.out.println("Sie befinden sich in " + spieler.getJetzigerOrt().getName() + " \n");
             System.out.println("Wählen Sie eine Option aus: ");
             System.out.println("1. Ware kaufen. ");
             System.out.println("2. Ware verkaufen. ");
             System.out.println("3. Reisen. ");
             System.out.println("4. Tätigkeit annehmen. ");
-            System.out.println("5. Spiel beenden.");
+            System.out.println("5. Lokalen Produkten essen. ");
+            System.out.println("6. Spiel beenden.");
 
             // Get input and validate
             int input = -1;
@@ -70,40 +79,58 @@ public class Spiel {
             switch (input) {
                 case 1:
                     spieler.kaufe();
+                    incrementTag();
                     break;
                 case 2:
                     spieler.verkaufe();
+                    incrementTag();
                     break;
                 case 3:
-                    reisen();
+                    spieler.reisen();
                     break;
                 case 4:
-                    taetigkeitAnnehmen();
+                    // taetigkeitAnnehmen();
+                    incrementTag();
                     break;
                 case 5:
+                    spieler.essen();
+                    break;
+                case 6:
                     beenden();
                     break;
             }
-
-            if (tag >= 100 || spieler.getLp() <= 0) {
-                beenden();
-            }
-
-            tag++;
         }
 
     }
 
-    private static void reisen() {
+    public static void incrementTag() {
+        tag++;
 
+        spieler.setLp(spieler.getLp() - 20);
+
+        // Bohnen essen
+        if (spieler.getLp() <= 80 && spieler.getBohnen() > 0) {
+            spieler.bohnenEssen();
+        }
+
+        if (tag >= 100 || spieler.getLp() <= 0 || spieler.getLp() > 100) {
+            beenden();
+        }
     }
 
-    private static void taetigkeitAnnehmen() {
-
+    public static List<Ort> getOrtListe() {
+        return ortListe;
     }
 
-    private static void beenden() {
-        System.out.println("Spielende. Sie haben " + spieler.getGoldstuecke() + " GS erreicht. ");
+    public static void beenden() {
+        if (spieler.getLp() <= 0) {
+            System.out.println("Sie sind gestorben. ");
+        } else if (spieler.getLp() > 100) {
+            System.out.println("Sie sind an Übergewicht gestorben.");
+        } else if (tag >= 100) {
+            System.out.println("Sie haben die 100 Tage überlebt. ");
+        }
+        System.out.println(spieler.getName() + ", Sie haben " + spieler.getGoldstuecke() + " GS erreicht. ");
         System.exit(0);
     }
 }
