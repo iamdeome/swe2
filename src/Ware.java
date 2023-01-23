@@ -1,5 +1,3 @@
-import java.util.List;
-
 public class Ware {
     String name;
     int preis;

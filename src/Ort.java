@@ -35,7 +35,7 @@ public class Ort {
         // Einkaufspreis * (1 + 0.1 * Tagesreisen von Dorf in Stadt)
         preis *= 1d + (0.1d * (Ort.distanceToDays(this.berechneEntfernungZu(ware.getGekauftIn()))));
         // Interesse
-        Random r = new Random(Spiel.getTag());
+        Random r = new Random(Spiel.getTag() + Spiel.random);
         int interesse = r.nextInt(4);
         if (interesse == 0) {
             // 1/4 chance to increase price by 100%

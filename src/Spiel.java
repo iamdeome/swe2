@@ -1,10 +1,12 @@
 import java.util.Scanner;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Spiel {
     public static Scanner sc = new Scanner(System.in);
-
+    public static int random = new Random().nextInt();
+    
     private static Spieler spieler;
     private static int tag = 1;
     private static List<Ort> ortListe;
@@ -19,9 +21,9 @@ public class Spiel {
         Ware W_schwert = new Ware("Schwert", 20, 10);
 
         // Create Tätigkeiten
-        Taetigkeit T_fegen = new Taetigkeit("Straße fegen", 10);
-        Taetigkeit T_limonade = new Taetigkeit("Limonade verkaufen", 20);
-        Taetigkeit T_fische = new Taetigkeit("Fische fangen", 30);
+        Taetigkeit T_fegen = new Taetigkeit("Straße fegen", 3);
+        Taetigkeit T_limonade = new Taetigkeit("Limonade verkaufen", 2);
+        Taetigkeit T_fische = new Taetigkeit("Fische fangen", 3);
 
         // Create Orte
         Ort O_berlin = new Ort("Berlin",
@@ -29,7 +31,7 @@ public class Spiel {
                 T_fegen, Arrays.asList(W_bohnen, W_brot, W_fisch), true);
         Ort O_hamburg = new Ort("Hamburg",
                 53.556451, 9.909963,
-                T_limonade, Arrays.asList(W_bohnen, W_brot, W_wasser), true);
+                T_fische, Arrays.asList(W_bohnen, W_brot, W_wasser), true);
         Ort O_dresden = new Ort("Dresden",
                 51.051431, 13.733612,
                 T_fische, Arrays.asList(W_bohnen, W_schwert, W_fisch, W_brot), true);
@@ -87,8 +89,7 @@ public class Spiel {
                     spieler.reisen();
                     break;
                 case 4:
-                    // taetigkeitAnnehmen();
-                    incrementTag();
+                    spieler.arbeiten();
                     break;
                 case 5:
                     spieler.essen();

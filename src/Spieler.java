@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class Spieler {
     private final String name;
@@ -169,8 +170,21 @@ public class Spieler {
         }
     }
 
-    public void verkaufe() {
+    public void arbeiten() {
+        Random random = new Random(Spiel.getTag() + Spiel.random);
+        if (random.nextInt(100) < 50) {
+            System.out.println("Heute wird keine Arbeit angeboten");
+            return;
+        }
 
+        setGoldstuecke(getGoldstuecke() + getJetzigerOrt().getArbeit().getLohn());
+
+        System.out.println("Sie haben diese Tätigkeit gemacht: " + getJetzigerOrt().getArbeit().getName());
+        System.out.println("Sie haben " + getJetzigerOrt().getArbeit().getLohn() + " Goldstücke verdient");
+        Spiel.incrementTag();
+    }
+
+    public void verkaufe() {
         while (true) {
 
             // Display all wares

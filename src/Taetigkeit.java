@@ -11,7 +11,11 @@ public class Taetigkeit {
         this.lohn = lohn;
     }
 
-    public void istVerfuegbar(){
+    public String getName() {
+        return name;
+    }
 
-    };
+    public int getLohn() {
+        return lohn;
+    }
 }
