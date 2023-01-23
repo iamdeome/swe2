@@ -52,8 +52,8 @@ public class Spiel {
         while (true) {
             System.out.println("");
             System.out.println(
-                    "tag: " + tag + " \t " + " LP " + spieler.getLp() + " \t " + " GS " + spieler.getGoldstuecke()
-                            + " Bohnen " + spieler.getBohnen());
+                    "Tag " + tag + "        " + "LP " + spieler.getLp() + "        GS " + spieler.getGoldstuecke()
+                            + "        Bohnen " + spieler.getBohnen());
             System.out.println("Sie befinden sich in " + spieler.getJetzigerOrt().getName() + " \n");
             System.out.println("Wählen Sie eine Option aus: ");
             System.out.println("1. Ware kaufen. ");
@@ -61,18 +61,16 @@ public class Spiel {
             System.out.println("3. Reisen. ");
             System.out.println("4. Tätigkeit annehmen. ");
             System.out.println("5. Lokalen Produkten essen. ");
-            System.out.println("6. Spiel beenden.");
+            System.out.println("6. Einen Tag warten. ");
+            System.out.println("7. Spiel beenden.");
 
             // Get input and validate
             int input = -1;
             try {
                 input = sc.nextInt();
-                if (input < 1 || input > 5) {
-                    throw new Exception();
-                }
             } catch (Exception e) {
                 sc.nextLine();
-                System.out.println("Ungültige Eingabe. Bitte geben Sie eine Zahl zwischen 1 und 5 ein");
+                System.out.println("Ungültige Eingabe");
                 continue;
             }
 
@@ -96,7 +94,13 @@ public class Spiel {
                     spieler.essen();
                     break;
                 case 6:
+                    incrementTag();
+                    break;
+                case 7:
                     beenden();
+                    break;
+                default:
+                    System.out.println("Ungültige Eingabe");
                     break;
             }
         }
@@ -107,11 +111,6 @@ public class Spiel {
         tag++;
 
         spieler.setLp(spieler.getLp() - 20);
-
-        // Bohnen essen
-        if (spieler.getLp() <= 80 && spieler.getBohnen() > 0) {
-            spieler.bohnenEssen();
-        }
 
         if (tag >= 100 || spieler.getLp() <= 0 || spieler.getLp() > 100) {
             beenden();
@@ -132,5 +131,9 @@ public class Spiel {
         }
         System.out.println(spieler.getName() + ", Sie haben " + spieler.getGoldstuecke() + " GS erreicht. ");
         System.exit(0);
+    }
+
+    public static int getTag() {
+        return tag;
     }
 }

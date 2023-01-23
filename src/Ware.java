@@ -39,4 +39,8 @@ public class Ware {
     public Ort getGekauftIn() {
         return gekauftIn;
     }
+
+    public boolean isBohnen() {
+        return name.equals("Bohnen mit Speck");
+    }
 }

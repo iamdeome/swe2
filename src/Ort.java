@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Random;
 
 public class Ort {
     private final String name;
@@ -22,6 +23,28 @@ public class Ort {
         this.arbeit = arbeit;
         this.angebot = angebot;
         this.istStadt = istStadt;
+
+        // Set gekauftIn for all angebot
+        for (Ware ware : angebot) {
+            ware.setGekauftIn(this);
+        }
+    }
+
+    public int preisFuer(Ware ware) {
+        double preis = (double) ware.getPreis();
+        // Einkaufspreis * (1 + 0.1 * Tagesreisen von Dorf in Stadt)
+        preis *= 1d + (0.1d * (Ort.distanceToDays(this.berechneEntfernungZu(ware.getGekauftIn()))));
+        // Interesse
+        Random r = new Random(Spiel.getTag());
+        int interesse = r.nextInt(4);
+        if (interesse == 0) {
+            // 1/4 chance to increase price by 100%
+            preis *= 2d;
+        } else if (interesse == 1) {
+            // 1/4 chance to decrease price by 100%
+            preis *= 0d;
+        }
+        return (int) Math.round(preis);
     }
 
     public static int distanceToDays(double distance) {
@@ -29,7 +52,7 @@ public class Ort {
         return (int) Math.ceil(distance / 75);
     }
 
-    public double calculateDistanceTo(Ort ort) {
+    public double berechneEntfernungZu(Ort ort) {
         // Null checks
         assert ort != null;
 

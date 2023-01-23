@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Spieler {
@@ -31,14 +31,14 @@ public class Spieler {
     public int getBohnen() {
         int bohnen = 0;
         for (Ware ware : wareListe) {
-            if (ware.getName().equals("Bohnen mit Speck")) {
+            if (ware.isBohnen()) {
                 bohnen++;
             }
         }
         return bohnen;
     }
 
-    public void bohnenEssen() {
+    private void bohnenEssen() {
         int bohnen = getBohnen();
         if (bohnen == 0) {
             System.out.println("Du hast keine Bohnen mit Speck. LP -20");
@@ -47,7 +47,7 @@ public class Spieler {
 
         // remove the first Bohnen mit Speck
         for (Ware ware : wareListe) {
-            if (ware.getName().equals("Bohnen mit Speck")) {
+            if (ware.isBohnen()) {
                 wareListe.remove(ware);
                 break;
             }
@@ -171,6 +171,85 @@ public class Spieler {
 
     public void verkaufe() {
 
+        while (true) {
+
+            // Display all wares
+            System.out.println();
+            System.out.println("Was möchtest du verkaufen?");
+            System.out.println("Gewicht: " + getGewicht() + "kg" + "\tGoldstücke: " + getGoldstuecke());
+            System.out.println("0: Nichts verkaufen");
+
+            // Calculate the amount of each ware
+            HashMap<Ware, Integer> anzahlMap = new HashMap<>();
+            for (Ware ware : wareListe) {
+                // Skip wares that are not for sale
+                if (ware.isBohnen())
+                    continue;
+
+                if (anzahlMap.containsKey(ware)) {
+                    anzahlMap.put(ware, anzahlMap.get(ware) + 1);
+                } else {
+                    anzahlMap.put(ware, 1);
+                }
+            }
+
+            // Print all wares
+            int i = 1;
+            for (Ware ware : anzahlMap.keySet()) {
+                int preis = jetzigerOrt.preisFuer(ware);
+                System.out.println(i + ": " + ware.getName() + " für " + preis + " Goldstücke (" + anzahlMap.get(ware)
+                        + " Stück)");
+                i++;
+            }
+
+            // Check if the player entered a selected a valid ware
+            int selectedIndex;
+            try {
+                selectedIndex = Spiel.sc.nextInt() - 1;
+                if (selectedIndex < -1 || selectedIndex >= anzahlMap.size()) {
+                    throw new Exception();
+                }
+            } catch (Exception e) {
+                Spiel.sc.nextLine();
+                System.out.println("Ungültige Eingabe");
+                continue;
+            }
+
+            // Check if the player wants to sell something
+            if (selectedIndex == -1) {
+                break;
+            }
+
+            // Get the selected ware
+            Ware selected = (Ware) anzahlMap.keySet().toArray()[selectedIndex];
+
+            System.out.println("Wie viele möchtest du verkaufen?");
+            // Check if the player entered a valid amount
+            int anzahl;
+            try {
+                anzahl = Spiel.sc.nextInt();
+                if (anzahl < 0 || anzahl > anzahlMap.get(selected)) {
+                    throw new Exception();
+                }
+            } catch (Exception e) {
+                Spiel.sc.nextLine();
+                System.out.println("Ungültige Eingabe");
+                continue;
+            }
+
+            // Sell the wares
+            for (int j = 0; j < anzahl; j++) {
+                wareListe.remove(selected);
+            }
+
+            // increase the players money
+            int preis = jetzigerOrt.preisFuer(selected) * anzahl;
+            setGoldstuecke(getGoldstuecke() + preis);
+
+            // Print receipt
+            System.out.println("Du hast " + anzahl + " " + selected.getName() + " verkauft für " + preis
+                    + " Goldstücke");
+        }
     }
 
     public void reisen() {
@@ -184,7 +263,7 @@ public class Spieler {
         // Show all available destinations
         System.out.println("0: Nicht reisen");
         for (int i = 0; i < ziele.size(); i++) {
-            double distance = jetzigerOrt.calculateDistanceTo(ziele.get(i));
+            double distance = jetzigerOrt.berechneEntfernungZu(ziele.get(i));
             int days = Ort.distanceToDays(distance);
             System.out.println((i + 1) + ": " + ziele.get(i).getName() + " ("
                     + days + " tage, " + Math.round(distance) + "km)");
@@ -209,10 +288,15 @@ public class Spieler {
         }
 
         // Increase the days
-        double distance = jetzigerOrt.calculateDistanceTo(ziele.get(selected));
+        double distance = jetzigerOrt.berechneEntfernungZu(ziele.get(selected));
         int days = Ort.distanceToDays(distance);
         for (int i = 0; i < days; i++) {
             Spiel.incrementTag();
+
+            // Bohnen essen
+            if (getLp() <= 80 && getBohnen() > 0) {
+                bohnenEssen();
+            }
         }
 
         // Travel to the selected destination
